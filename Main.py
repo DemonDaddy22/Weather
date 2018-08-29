@@ -23,7 +23,6 @@ class Coordinates:
             Coordinates.coordinates.append(lat)
             lon = data['results'][0]['geometry']['location']['lng']
             Coordinates.coordinates.append(lon)
-            Coordinates.coordinates = Coordinates.coordinates
         except Exception as e:
             print(e)
 
@@ -82,7 +81,7 @@ class saveDB:
             con = mysql.connector.connect(user="root", password="", host="127.0.0.1", database="db1")
             if con.is_connected():
                 cursor = con.cursor()
-                sql = "insert into openweather values(null,'{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(date,self.add.upper(),
+                sql = "insert into Weather values(null,'{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(date,self.add.upper(),
                                                                                             self.dictionary.get("weather"),
                                                                                             self.dictionary.get("temp"),
                                                                                             self.dictionary.get("pressure"),
@@ -110,19 +109,16 @@ while i<len(cities):
             c2 = City(coordinates)
             print(c2.coordinates)
             test = {}
-            if len(coordinates)==0:
-                print("Here Now!")
+            c2.findWeather()
+            test = c2.getWeather()
+            if len(test)==0:
+                print("Here!")
             else:
-                c2.findWeather()
-                test = c2.getWeather()
-                if len(test)==0:
-                    print("Here!")
-                else:
-                    i = i + 1
-                    c3 = saveDB(loc, test)
-                    c3.save()
-                    print("Saved!")
+                i = i + 1
+                c3 = saveDB(loc, test)
+                c3.save()
+                print("Saved!")
         else:
-            break
+            continue
     except Exception as e:
-        print("Check the connection!")
+        print("Error",e)
