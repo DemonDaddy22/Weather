@@ -1,13 +1,51 @@
 import matplotlib.pyplot as plt
 import matplotlib.style as st
 import mysql.connector
-# import MainModule as mm
+
+class DataBase_Retrieval:
+    def getData(self):
+        con = mysql.connector.connect(user = 'root', password = '', host = '127.0.0.1', database = 'db1')
+        cursor = con.cursor()
+        sql = 'select * from weather'
+        cursor.execute(sql)
+        cities = []
+        final_dict = {}
+        # Creating a list with distinct cities
+        for row in cursor:
+            if row[2] not in cities:
+                cities.append(row[2])
+            else:
+                continue
+
+        for city in cities:
+            weather = []
+            temp = []
+            pressure = []
+            humidity = []
+            min_temp = []
+            max_temp = []
+            wind_speed = []
+            sys_date = []
+            sql = 'select * from weather'
+            cursor.execute(sql)
+            for row in cursor:
+                if city == row[2]:
+                    sys_date.append(row[1])
+                    weather.append(row[3])
+                    temp.append(row[4])
+                    pressure.append(row[5])
+                    humidity.append(row[6])
+                    min_temp.append(row[7])
+                    max_temp.append(row[8])
+                    wind_speed.append(row[9])
+                else:
+                    pass
 
 class Graphs:
-    def makeGraph1(self, data,startDate,endDate):
+    def makeGraph1(self, city, data, startDate, endDate):
         self.data = data
         temp = self.data['temp']
-        date2 = self.data['date1']
+        date2 = self.data['sys_date']
         pressure = self.data['pressure']
         humidity = self.data['humidity']
         min_temp = self.data['min_temp']
@@ -16,6 +54,15 @@ class Graphs:
         weather = self.data['weather']
         startIndex = 0
         endIndex = 0
+
+        for i in range(len(temp)):
+            temp[i] = float(temp[i])
+            pressure[i] = float(pressure[i])
+            wind_speed[i] = float(wind_speed[i])
+            humidity[i] = float(humidity[i])
+            max_temp[i] = float(max_temp[i])
+            min_temp[i] = float(min_temp[i])
+
         for i in range(len(date2)):
             if date2[i] == startDate:
                 startIndex = i
@@ -56,6 +103,9 @@ class Graphs:
         plt.xlabel('Days')
         plt.ylabel('Wind Speed')
         plt.xticks(list(range(0, n + 1)))
+
+        plt.suptitle('Weather Analysis of ' +city+ ' from ' +startDate+ ' to ' +endDate)
+        plt.show()
 
     def makeGraph2(self, data, parameter, startDate, endDate):
         # make data a dictionary with keys as city names
@@ -115,55 +165,3 @@ class Graphs:
         plt.legend(loc=2)
         plt.show()
 
-import mysql.connector
-
-class DataBase_Retrieval:
-    def getData(self):
-        con = mysql.connector.connect(user = 'root', password = '', host = '127.0.0.1', database = 'mysql')
-        cursor = con.cursor()
-        sql = 'select * from openweather'
-        cursor.execute(sql)
-        cities = []
-        final_dict = {}
-        # Creating a list with distinct cities
-        for row in cursor:
-            if row[1] not in cities:
-                cities.append(row[1])
-            else:
-                continue
-
-        for city in cities:
-            weather = []
-            temp = []
-            pressure = []
-            humidity = []
-            min_temp = []
-            max_temp = []
-            wind_speed = []
-            for row in cursor:
-                if city == row[1]:
-                    weather.append(row[2])
-                    temp.append(row[3])
-                    pressure.append(row[4])
-                    humidity.append(row[5])
-                    min_temp.append(row[6])
-                    max_temp.append(row[7])
-                    wind_speed.append(row[8])
-                else:
-                    pass
-            
-            dict1 = {'weather': weather, 'temp': temp, 'pressure': pressure, 'humidity': humidity, 'min_temp': min_temp, 'max_temp': max_temp, 'wind_speed': wind_speed}
-            final_dict.setdefault(city, []).append(dict1)
-
-        return final_dict
-        
-dr = DataBase_Retrieval()
-data = dr.getData()
-print(data)
-city1 = input("Enter City: ")
-startDate = input("Enter Start Date: ")
-endDate = input("Enter End Date: ")
-data1  = data[city1.upper()][0]
-graph1 = Graphs()
-graph2 = Graphs()
-graph1.makeGraph1(data1, startDate, endDate)
