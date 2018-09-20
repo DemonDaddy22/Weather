@@ -11,20 +11,23 @@ class Coordinates:
         self.add = add
 
     def findCoordinates(self):
-        link = 'http://maps.googleapis.com/maps/api/geocode/json'
+        link = 'https://maps.googleapis.com/maps/api/geocode/json'
         address = self.add
-        params = {'address': address}
+        params = {'address': address, 'key': 'AIzaSyCKHKwbVAAh9OgMpL5PtEXyndcO_jUI9nI'} # key needs to be updated as it expires frequently
 
         try:
             response = requests.get(link, params=params)
             time.sleep(1)
             data = response.json()
+            print()
+            print(data)
+            print()
             lat = data['results'][0]['geometry']['location']['lat']
             Coordinates.coordinates.append(lat)
             lon = data['results'][0]['geometry']['location']['lng']
             Coordinates.coordinates.append(lon)
         except Exception as e:
-            print(e)
+            print("Travelling to " +address+ " to find its coordinates...")
 
     def getCoordinates(self):
         return Coordinates.coordinates
@@ -92,7 +95,7 @@ class saveDB:
                 cursor.execute(sql)
                 con.commit()
             else:
-                pass
+                print ("Connect your database please!")
 
 cities = ['Tokyo','New York','Rio de Janeiro','London','Cape Town','Mumbai','Sydney','Paris','Munich','Toronto']
 i = 0
@@ -107,17 +110,18 @@ while i<len(cities):
         coordinates = c1.getCoordinates()
         if len(coordinates)!=0:
             c2 = City(coordinates)
-            print(c2.coordinates)
+            print("Reached:",c2.coordinates)
             test = {}
             c2.findWeather()
             test = c2.getWeather()
-            if len(test)==0:
-                print("Here!")
-            else:
+            if len(test)!=0:
                 i = i + 1
                 c3 = saveDB(loc, test)
                 c3.save()
+                print(test)
                 print("Saved!")
+            else:
+                pass
         else:
             continue
     except Exception as e:
