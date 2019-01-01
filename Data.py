@@ -74,7 +74,7 @@ class saveDB:
             pass
         else:
             now = datetime.datetime.now()
-            day = str(now.day-1)
+            day = str(now.day)
             month = str(now.month)
             year = str(now.year)
             print("Weather Report of", now.strftime("%d-%m-%Y %H:%M"))
