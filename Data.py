@@ -11,7 +11,7 @@ class Coordinates:
         self.add = add
 
     def findCoordinates(self):
-        key = 'AIzaSyAkSDTUGQn_duRqf5LDPzoIpNHrjQ4qd5Y' # key needs to be updated as it expires frequently
+        key = your_key # key needs to be updated as it expires frequently (else add billing account to your project)
         link = 'https://maps.googleapis.com/maps/api/geocode/json?key=' + key
         address = self.add
         params = {'address': address} 
