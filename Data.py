@@ -42,7 +42,7 @@ class City:
         coor = self.coordinates
         lat = coor[0]
         lon = coor[1]
-        user_api = 'f50cf750f8468c9127cf0a7aa1a37409'
+        user_api = your_api_key
         unit = 'metric'
         api = 'http://api.openweathermap.org/data/2.5/weather?lat='
         link = api + str(lat) + '&lon=' + str(lon) + '&mode=json&units=' + unit + '&APPID=' + user_api
